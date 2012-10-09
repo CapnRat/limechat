@@ -1486,7 +1486,7 @@
                     c = [world createTalk:chname client:self];
                 }
 
-                [self printBoth:(c ?: (id)chname) type:type nick:myNick text:t identified:YES];
+                [self printBoth:c type:type nick:myNick text:t identified:YES];
 
                 // support @#channel and omsg/onotice
                 if ([chname isChannelName]) {
@@ -1874,22 +1874,22 @@
     return result;
 }
 
-- (BOOL)needPrintConsole:(id)chan
+- (BOOL)needPrintConsole:(id)chan type:(LogLineType)type
 {
-    if (!chan) chan = self;
+    // chan will be nil if server message. Don't print these to Console.
+    if (!chan) return NO;
+    
+    // making the assumption that chan will always either be nil or an IRCChannel, not sure though...
+    NSAssert ([chan isKindOfClass:[IRCChannel class]], @"Unexpected chan type.");
 
-    IRCTreeItem* target = self;
-    IRCChannel* channel = nil;
-    if ([chan isKindOfClass:[IRCChannel class]]) {
-        channel = (IRCChannel*)chan;
-        target = channel;
-    }
-
-    if (channel && !channel.config.logToConsole) {
+    // check for explicity exclusion from printing to console for this channel
+    IRCChannel* channel = (IRCChannel*)chan;
+    if (!channel.config.logToConsole) {
         return NO;
     }
-
-    return target != world.selected || !target.log.viewingBottom;
+    
+    // only print channel messages and private messages
+    return type == LINE_TYPE_ACTION || type == LINE_TYPE_PRIVMSG;
 }
 
 - (BOOL)printBoth:(id)chan type:(LogLineType)type text:(NSString*)text
@@ -1914,7 +1914,7 @@
 - (BOOL)printBoth:(id)chan type:(LogLineType)type nick:(NSString*)nick text:(NSString*)text identified:(BOOL)identified receivedAt:(time_t)receivedAt
 {
     BOOL result = [self printChannel:chan type:type nick:nick text:text identified:identified receivedAt:receivedAt];
-    if ([self needPrintConsole:chan]) {
+    if ([self needPrintConsole:chan type:type]) {
         [self printConsole:chan type:type nick:nick text:text identified:identified receivedAt:receivedAt];
     }
     return result;
@@ -2891,11 +2891,6 @@
 
     // rename nick in dcc
     [world.dcc nickChanged:nick toNick:toNick client:self];
-
-    if ([Preferences showRename]) {
-        NSString* text = [NSString stringWithFormat:@"%@ is now known as %@", nick, toNick];
-        [self printConsole:nil type:LINE_TYPE_NICK text:text receivedAt:m.receivedAt];
-    }
 }
 
 - (void)receiveMode:(IRCMessage*)m
