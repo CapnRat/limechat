@@ -1874,13 +1874,17 @@
     return result;
 }
 
-- (BOOL)needPrintConsole:(id)chan type:(LogLineType)type
+- (BOOL)needPrintConsole:(id)chan type:(LogLineType)type nick:(NSString*)nick
 {
     // chan will be nil if server message.
     if (!chan) {
         // Only print invites to console
         return type == LINE_TYPE_INVITE;
     }
+    
+    // exclude "our" messages
+    if ([nick isEqualToString:myNick])
+        return NO;
     
     // making the assumption that chan will always either be nil or an IRCChannel, not sure though...
     NSAssert ([chan isKindOfClass:[IRCChannel class]], @"Unexpected chan type.");
@@ -1917,7 +1921,7 @@
 - (BOOL)printBoth:(id)chan type:(LogLineType)type nick:(NSString*)nick text:(NSString*)text identified:(BOOL)identified receivedAt:(time_t)receivedAt
 {
     BOOL result = [self printChannel:chan type:type nick:nick text:text identified:identified receivedAt:receivedAt];
-    if ([self needPrintConsole:chan type:type]) {
+    if ([self needPrintConsole:chan type:type nick:nick]) {
         [self printConsole:chan type:type nick:nick text:text identified:identified receivedAt:receivedAt];
     }
     return result;
