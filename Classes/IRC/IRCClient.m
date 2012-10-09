@@ -1876,8 +1876,11 @@
 
 - (BOOL)needPrintConsole:(id)chan type:(LogLineType)type
 {
-    // chan will be nil if server message. Don't print these to Console.
-    if (!chan) return NO;
+    // chan will be nil if server message.
+    if (!chan) {
+        // Only print invites to console
+        return type == LINE_TYPE_INVITE;
+    }
     
     // making the assumption that chan will always either be nil or an IRCChannel, not sure though...
     NSAssert ([chan isKindOfClass:[IRCChannel class]], @"Unexpected chan type.");
@@ -2988,7 +2991,7 @@
     }
 
     NSString* text = [NSString stringWithFormat:@"%@ has invited you to %@", nick, chname];
-    [self printBoth:self type:LINE_TYPE_INVITE text:text receivedAt:m.receivedAt];
+    [self printBoth:nil type:LINE_TYPE_INVITE text:text receivedAt:m.receivedAt];
 
     if ([Preferences autoJoinOnInvited]) {
         IRCChannel* c = [self findChannel:chname];
