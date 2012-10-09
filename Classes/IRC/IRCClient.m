@@ -2011,7 +2011,7 @@
     LogMemberType memberType = MEMBER_TYPE_NORMAL;
     int colorNumber = 0;
     id clickContext = nil;
-    NSArray* keywords = nil;
+    NSMutableArray* keywords = nil;
     NSArray* excludeWords = nil;
 
     if (time.length) {
@@ -2062,13 +2062,15 @@
 
     if (type == LINE_TYPE_PRIVMSG || type == LINE_TYPE_ACTION) {
         if (memberType != MEMBER_TYPE_MYSELF) {
-            keywords = [Preferences keywords];
+            keywords = [[[Preferences keywords] mutableCopy] autorelease];
             excludeWords = [Preferences excludeWords];
-
+            
             if ([Preferences keywordCurrentNick]) {
-                NSMutableArray* ary = [[keywords mutableCopy] autorelease];
-                [ary insertObject:myNick atIndex:0];
-                keywords = ary;
+                [keywords addObject:myNick];
+            }
+            
+            if (channel && [[channel name] rangeOfString:@"#unity3d"].location == NSNotFound) {
+                [keywords addObject:@"unity"];
             }
         }
     }
