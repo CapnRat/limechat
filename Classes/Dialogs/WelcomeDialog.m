@@ -154,7 +154,7 @@
 }
 
 #pragma mark -
-#pragma mark NSTableViwe Delegate
+#pragma mark NSTableView Delegate
 
 - (void)textDidEndEditing:(NSNotification*)note
 {

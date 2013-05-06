@@ -2016,7 +2016,7 @@
     int colorNumber = 0;
     id clickContext = nil;
     NSMutableArray* keywords = nil;
-    NSArray* excludeWords = nil;
+    NSMutableArray* excludeWords = nil;
 
     if (time.length) {
         time = [time stringByAppendingString:@" "];
@@ -2067,14 +2067,15 @@
     if (type == LINE_TYPE_PRIVMSG || type == LINE_TYPE_ACTION) {
         if (memberType != MEMBER_TYPE_MYSELF) {
             keywords = [[[Preferences keywords] mutableCopy] autorelease];
-            excludeWords = [Preferences excludeWords];
+            excludeWords = [[[Preferences excludeWords] mutableCopy] autorelease];
             
             if ([Preferences keywordCurrentNick]) {
                 [keywords addObject:myNick];
             }
             
-            if (channel && [[channel name] rangeOfString:@"#unity3d"].location == NSNotFound) {
-                [keywords addObject:@"unity"];
+            if (channel) {
+                [keywords addObjectsFromArray:[[channel config] keywords]];
+                [excludeWords addObjectsFromArray:[[channel config] excludeWords]];
             }
         }
     }
@@ -2110,7 +2111,7 @@
     LogMemberType memberType = MEMBER_TYPE_NORMAL;
     int colorNumber = 0;
     NSMutableArray* keywords = nil;
-    NSArray* excludeWords = nil;
+    NSMutableArray* excludeWords = nil;
 
     if (time.length) {
         time = [time stringByAppendingString:@" "];
@@ -2146,14 +2147,15 @@
     if (type == LINE_TYPE_PRIVMSG || type == LINE_TYPE_ACTION) {
         if (memberType != MEMBER_TYPE_MYSELF) {
             keywords = [[[Preferences keywords] mutableCopy] autorelease];
-            excludeWords = [Preferences excludeWords];
+            excludeWords = [[[Preferences excludeWords] mutableCopy] autorelease];
 
             if ([Preferences keywordCurrentNick]) {
                 [keywords addObject:myNick];
             }
-
-            if (channel && [[channel name] rangeOfString:@"#unity3d"].location == NSNotFound) {
-                [keywords addObject:@"unity"];
+            
+            if (channel) {
+                [keywords addObjectsFromArray:[[channel config] keywords]];
+                [excludeWords addObjectsFromArray:[[channel config] excludeWords]];
             }
         }
     }

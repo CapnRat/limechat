@@ -21,12 +21,18 @@
 
 @synthesize autoOp;
 
+@synthesize keywords;
+@synthesize excludeWords;
+
 - (id)init
 {
     self = [super init];
     if (self) {
         type = CHANNEL_TYPE_CHANNEL;
         autoOp = [NSMutableArray new];
+        
+        keywords = [NSMutableArray new];
+        excludeWords = [NSMutableArray new];
 
         autoJoin = YES;
         logToConsole = YES;
@@ -57,6 +63,9 @@
         topic = [[dic stringForKey:@"topic"] retain] ?: @"";
 
         [autoOp addObjectsFromArray:[dic arrayForKey:@"autoop"]];
+        
+        [keywords addObjectsFromArray:[dic arrayForKey:@"keywords"]];
+        [excludeWords addObjectsFromArray:[dic arrayForKey:@"excludeWords"]];
     }
     return self;
 }
@@ -70,6 +79,9 @@
     [topic release];
 
     [autoOp release];
+    
+    [keywords release];
+    [excludeWords release];
 
     [super dealloc];
 }
@@ -91,6 +103,9 @@
     if (topic) [dic setObject:topic forKey:@"topic"];
 
     if (autoOp) [dic setObject:autoOp forKey:@"autoop"];
+    
+    if (keywords) [dic setObject:keywords forKey:@"keywords"];
+    if (excludeWords) [dic setObject:excludeWords forKey:@"excludeWords"];
 
     return dic;
 }

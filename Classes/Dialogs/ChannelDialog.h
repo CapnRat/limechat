@@ -3,6 +3,7 @@
 
 #import <Foundation/Foundation.h>
 #import "IRCChannelConfig.h"
+#import "ListView.h"
 
 
 @interface ChannelDialog : NSObject
@@ -17,6 +18,11 @@
     IBOutlet NSButton* consoleCheck;
     IBOutlet NSButton* growlCheck;
     IBOutlet NSButton* okButton;
+    
+    IBOutlet ListView* keywordsTable;
+    IBOutlet ListView* excludeWordsTable;
+    NSMutableArray* keywords;
+    NSMutableArray* excludeWords;
     
     __weak id delegate;
     __weak NSWindow* parentWindow;
@@ -42,6 +48,12 @@
 
 - (void)ok:(id)sender;
 - (void)cancel:(id)sender;
+
+- (IBAction)onAddKeyword:(id)sender;
+- (IBAction)onAddExcludeWord:(id)sender;
+
+- (IBAction)onRemoveKeyword:(id)sender;
+- (IBAction)onRemoveExcludeWord:(id)sender;
 
 @end
 

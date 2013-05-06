@@ -25,6 +25,9 @@ typedef enum {
     NSString* topic;
 
     NSMutableArray* autoOp;
+    
+    NSMutableArray* keywords;
+    NSMutableArray* excludeWords;
 }
 
 @property (nonatomic) ChannelType type;
@@ -40,6 +43,9 @@ typedef enum {
 @property (nonatomic, strong) NSString* topic;
 
 @property (nonatomic, readonly) NSMutableArray* autoOp;
+
+@property (nonatomic, readonly) NSMutableArray* keywords;
+@property (nonatomic, readonly) NSMutableArray* excludeWords;
 
 - (id)initWithDictionary:(NSDictionary*)dic;
 - (NSMutableDictionary*)dictionaryValue;
