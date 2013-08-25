@@ -344,6 +344,12 @@
     [NSApp terminate:nil];
 }
 
+- (void)windowDidResignKey:(NSNotification *)note
+{
+    IRCTreeItem* sel = world.selected;
+    if (sel) [sel.log unmark];
+}
+
 #pragma mark -
 #pragma mark FieldEditorTextView Delegate
 

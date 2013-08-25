@@ -37,6 +37,7 @@
 @synthesize maxLines;
 @synthesize console;
 @synthesize initialBackgroundColor;
+@synthesize marked;
 
 - (id)init
 {
@@ -223,6 +224,8 @@
     ++count;
 
     [self restorePosition];
+    
+    marked = YES;
 }
 
 - (void)unmark
@@ -236,6 +239,8 @@
         [[doc body] removeChild:e];
         --count;
     }
+    
+    marked = NO;
 }
 
 - (void)goToMark
